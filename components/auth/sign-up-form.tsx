@@ -1,12 +1,12 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { supabase } from "@/lib/supabase"
 
 interface SignUpFormProps {
   onToggleMode: () => void
@@ -41,9 +41,19 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
     } else {
       setSuccess("Account created! Please check your email to confirm your address.")
       setEmail("")
-     setPassword("")
+      setPassword("")
       setName("")
     }
+  }
+
+  const signUpWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:3000/dashboard",
+      },
+    })
+    if (error) console.error("Google sign up error:", error.message)
   }
 
   return (
@@ -105,6 +115,17 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
             {isLoading ? "Creating Account..." : "Sign Up"}
           </Button>
         </form>
+
+        {/* Google Sign Up Button */}
+        <div className="mt-4">
+          <Button
+            onClick={signUpWithGoogle}
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-mono"
+          >
+            Continue with Google
+          </Button>
+        </div>
+
         <div className="mt-4 text-center">
           <button
             onClick={onToggleMode}

@@ -1,15 +1,13 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Router } from "next/router"
 import { useRouter } from "next/navigation"
-
+import { supabase } from "@/lib/supabase"
 
 interface SignInFormProps {
   onToggleMode: () => void
@@ -34,10 +32,19 @@ export function SignInForm({ onToggleMode }: SignInFormProps) {
     const success = await signIn(email, password)
     if (!success) {
       setError("Invalid email or password")
-    }
-    else(
+    } else {
       router.push("/dashboard")
-    )
+    }
+  }
+
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:3000/dashboard",
+      },
+    })
+    if (error) console.error("Error logging in:", error.message)
   }
 
   return (
@@ -85,6 +92,17 @@ export function SignInForm({ onToggleMode }: SignInFormProps) {
             {isLoading ? "Signing In..." : "Sign In"}
           </Button>
         </form>
+
+        {/* Google Sign In Button */}
+        <div className="mt-4">
+          <Button
+            onClick={signInWithGoogle}
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-mono"
+          >
+            Continue with Google
+          </Button>
+        </div>
+
         <div className="mt-4 text-center">
           <button
             onClick={onToggleMode}
