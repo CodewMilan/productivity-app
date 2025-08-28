@@ -1,95 +1,70 @@
 "use client"
 
-import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
-
-interface User {
-  id: string
-  email: string
-  name: string
-}
+import { supabase } from "@/lib/supabase"
 
 interface AuthContextType {
-  user: User | null
-  signIn: (email: string, password: string) => Promise<boolean>
-  signUp: (email: string, password: string, name: string) => Promise<boolean>
-  signOut: () => void
+  user: any
   isLoading: boolean
+  signUp: (email: string, password: string, name: string) => Promise<boolean>
+  signIn: (email: string, password: string) => Promise<boolean>
+  signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("productivity-app-user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
-    setIsLoading(false)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  const signIn = async (email: string, password: string): Promise<boolean> => {
+  const signUp = async (email: string, password: string, name: string) => {
     setIsLoading(true)
-
-    const storedUsers = JSON.parse(localStorage.getItem("productivity-app-users") || "[]")
-    const foundUser = storedUsers.find((u: any) => u.email === email && u.password === password)
-
-    if (foundUser) {
-      const userSession = { id: foundUser.id, email: foundUser.email, name: foundUser.name }
-      setUser(userSession)
-      localStorage.setItem("productivity-app-user", JSON.stringify(userSession))
-      setIsLoading(false)
-      return true
-    }
-
-    setIsLoading(false)
-    return false
-  }
-
-  const signUp = async (email: string, password: string, name: string): Promise<boolean> => {
-    setIsLoading(true)
-
-    const storedUsers = JSON.parse(localStorage.getItem("productivity-app-users") || "[]")
-    const existingUser = storedUsers.find((u: any) => u.email === email)
-
-    if (existingUser) {
-      setIsLoading(false)
-      return false // User already exists
-    }
-
-    const newUser = {
-      id: Date.now().toString(),
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      name,
-    }
-
-    storedUsers.push(newUser)
-    localStorage.setItem("productivity-app-users", JSON.stringify(storedUsers))
-
-    const userSession = { id: newUser.id, email: newUser.email, name: newUser.name }
-    setUser(userSession)
-    localStorage.setItem("productivity-app-user", JSON.stringify(userSession))
-
+      options: {
+        data: { name }, // store name in user metadata
+      },
+    })
     setIsLoading(false)
+    if (error) return false
+    setUser(data.user)
     return true
   }
 
-  const signOut = () => {
-    setUser(null)
-    localStorage.removeItem("productivity-app-user")
+  const signIn = async (email: string, password: string) => {
+    setIsLoading(true)
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    setIsLoading(false)
+    if (error) return false
+    setUser(data.user)
+    return true
   }
 
-  return <AuthContext.Provider value={{ user, signIn, signUp, signOut, isLoading }}>{children}</AuthContext.Provider>
+  const signOut = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, isLoading, signUp, signIn, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {
   const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
+  if (!context) throw new Error("useAuth must be used inside AuthProvider")
   return context
 }

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
@@ -18,11 +17,13 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
   const { signUp, isLoading } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    setSuccess("")
 
     if (!email || !password || !name) {
       setError("Please fill in all fields")
@@ -34,9 +35,14 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
       return
     }
 
-    const success = await signUp(email, password, name)
-    if (!success) {
-      setError("User with this email already exists")
+    const ok = await signUp(email, password, name)
+    if (!ok) {
+      setError("Sign up failed. Try again.")
+    } else {
+      setSuccess("Account created! Please check your email to confirm your address.")
+      setEmail("")
+     setPassword("")
+      setName("")
     }
   }
 
@@ -44,7 +50,9 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
     <Card className="w-full max-w-md bg-gradient-to-b from-gray-900 to-black border-gray-800/40">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-mono text-white tracking-wider">Sign Up</CardTitle>
-        <CardDescription className="text-gray-400 font-mono text-sm">Create your productivity account</CardDescription>
+        <CardDescription className="text-gray-400 font-mono text-sm">
+          Create your productivity account
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -88,12 +96,20 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
             />
           </div>
           {error && <p className="text-red-400 text-sm font-mono">{error}</p>}
-          <Button type="submit" className="w-full bg-white text-black hover:bg-gray-200 font-mono" disabled={isLoading}>
+          {success && <p className="text-green-400 text-sm font-mono">{success}</p>}
+          <Button
+            type="submit"
+            className="w-full bg-white text-black hover:bg-gray-200 font-mono"
+            disabled={isLoading}
+          >
             {isLoading ? "Creating Account..." : "Sign Up"}
           </Button>
         </form>
         <div className="mt-4 text-center">
-          <button onClick={onToggleMode} className="text-gray-400 hover:text-white font-mono text-sm transition-colors">
+          <button
+            onClick={onToggleMode}
+            className="text-gray-400 hover:text-white font-mono text-sm transition-colors"
+          >
             Already have an account? Sign in
           </button>
         </div>

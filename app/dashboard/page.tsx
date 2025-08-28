@@ -147,7 +147,7 @@ export default function DashboardPage() {
     <div className="p-6 min-h-[calc(100vh-5rem)]">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Timer */}
+          
           <div className="lg:col-span-2 flex items-center justify-center">
             <div className="w-full max-w-sm">
               <div className="text-center mb-12 hover:scale-105 transition-all duration-300 transform">
@@ -181,7 +181,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Stats Sidebar */}
+         
           <div className="space-y-6">
             <StatsCard />
 
