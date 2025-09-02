@@ -50,7 +50,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:3000/dashboard",
+        redirectTo: "https://taskline.vercel.app/dashboard",
       },
     })
     if (error) console.error("Google sign up error:", error.message)
