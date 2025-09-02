@@ -2,8 +2,9 @@
 
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
-import { Timer, StickyNote, Calendar, BarChart3, LogOut } from "lucide-react"
+import { Timer, StickyNote, Calendar, BarChart3, LogOut, Code2, Trophy } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
+import { ProfilePopover } from "./profile-popover"
 
 export function Navbar() {
   const { user, signOut } = useAuth()
@@ -20,6 +21,8 @@ export function Navbar() {
     { name: "Notes", icon: StickyNote, path: "/dashboard/notes" },
     { name: "Calendar", icon: Calendar, path: "/dashboard/calendar" },
     { name: "Tracker", icon: BarChart3, path: "/dashboard/tracker" },
+    { name: "Coders", icon: Code2, path: "/dashboard/coders" },
+    { name: "Leaderboard", icon: Trophy, path: "/dashboard/leaderboard" },
   ]
 
   return (
@@ -54,7 +57,7 @@ export function Navbar() {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
-            <span className="text-gray-300 font-mono text-sm hidden sm:block">{user?.name}</span>
+            <ProfilePopover></ProfilePopover>
             <Button
               onClick={handleSignOut}
               variant="ghost"

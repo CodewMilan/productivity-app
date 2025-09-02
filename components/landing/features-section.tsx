@@ -1,4 +1,4 @@
-import { Clock, FileText, Calendar, BarChart3 } from "lucide-react"
+import { Clock, FileText, Calendar, BarChart3,Code2, Trophy } from "lucide-react"
 
 const features = [
   {
@@ -24,6 +24,18 @@ const features = [
     title: "Focus Tracking",
     description:
       "Monitor your digital habits and tab usage. Get insights into your focus patterns and improve your productivity.",
+  },
+  {
+    icon: Code2,
+    title: "Coders: GitHub + LeetCode",
+    description:
+      "Connect your GitHub and LeetCode to view contribution stats and problem progress right inside your dashboard.",
+  },
+  {
+    icon: Trophy,
+    title: "Leaderboard",
+    description:
+      "See how you rank across the platform with productivity scores, and challenge friends to stay accountable.",
   },
 ]
 

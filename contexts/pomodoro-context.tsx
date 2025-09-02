@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect, useRef } from "react"
 interface PomodoroStats {
   totalSessions: number
   todaySessions: number
-  totalFocusTime: number // in minutes
+  totalFocusTime: number 
   streak: number
   lastSessionDate: string
 }
@@ -26,8 +26,8 @@ interface PomodoroContextType {
 
 const PomodoroContext = createContext<PomodoroContextType | undefined>(undefined)
 
-const FOCUS_TIME = 25 * 60 // 25 minutes
-const BREAK_TIME = 5 * 60 // 5 minutes
+const FOCUS_TIME = 25 * 60 
+const BREAK_TIME = 5 * 60 
 
 export function PomodoroProvider({ children }: { children: React.ReactNode }) {
   const [timeLeft, setTimeLeft] = useState(FOCUS_TIME)
@@ -44,7 +44,7 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
   })
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Load saved state on mount
+ 
   useEffect(() => {
     const savedState = localStorage.getItem("productivity-app-pomodoro")
     const savedStats = localStorage.getItem("productivity-app-pomodoro-stats")
@@ -62,7 +62,7 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  // Save state whenever it changes
+ 
   useEffect(() => {
     const state = {
       timeLeft,
@@ -73,12 +73,12 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("productivity-app-pomodoro", JSON.stringify(state))
   }, [timeLeft, isBreak, sessions, displayStyle])
 
-  // Save stats whenever they change
+ 
   useEffect(() => {
     localStorage.setItem("productivity-app-pomodoro-stats", JSON.stringify(stats))
   }, [stats])
 
-  // Timer logic
+ 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       intervalRef.current = setInterval(() => {
@@ -87,7 +87,7 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     } else if (timeLeft === 0) {
       setIsActive(false)
 
-      // Show notification
+     
       if ("Notification" in window && Notification.permission === "granted") {
         new Notification(isBreak ? "Break time is over!" : "Focus session completed!", {
           body: isBreak ? "Time to get back to work!" : "Take a well-deserved break!",
@@ -96,11 +96,11 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (!isBreak) {
-        // Completed a focus session
+       
         const newSessions = sessions + 1
         setSessions(newSessions)
 
-        // Update stats
+        
         const today = new Date().toDateString()
         const isNewDay = stats.lastSessionDate !== today
 
@@ -119,7 +119,7 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
         setIsBreak(true)
         setTimeLeft(BREAK_TIME)
       } else {
-        // Completed a break
+       
         setIsBreak(false)
         setTimeLeft(FOCUS_TIME)
       }
@@ -136,7 +136,7 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isActive, timeLeft, isBreak, sessions, stats.lastSessionDate])
 
-  // Request notification permission on mount
+  
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission()

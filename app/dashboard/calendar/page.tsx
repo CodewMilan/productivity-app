@@ -11,13 +11,21 @@ interface Reminder {
   id: string
   title: string
   description: string
-  date: string
-  time: string
+  date: string      
+  time: string      
   createdAt: Date
 }
 
+function todayString(): string {
+  const d = new Date()
+  const yyyy = d.getFullYear()
+  const mm = String(d.getMonth() + 1).padStart(2, "0")
+  const dd = String(d.getDate()).padStart(2, "0")
+  return `${yyyy}-${mm}-${dd}`
+}
+
 export default function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [selectedDate, setSelectedDate] = useState<string>(todayString())
   const [showEditor, setShowEditor] = useState(false)
   const [editingReminder, setEditingReminder] = useState<Reminder | undefined>(undefined)
 
@@ -40,7 +48,9 @@ export default function CalendarPage() {
     <div className="p-6 min-h-[calc(100vh-5rem)]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-mono font-light text-white tracking-[0.3em] uppercase mb-4">Calendar</h1>
+          <h1 className="text-2xl font-mono font-light text-white tracking-[0.3em] uppercase mb-4">
+            Calendar
+          </h1>
           <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto"></div>
         </div>
 
@@ -69,7 +79,12 @@ export default function CalendarPage() {
 
         {/* Reminder Editor Modal */}
         {showEditor && (
-          <ReminderEditor reminder={editingReminder} selectedDate={selectedDate} onClose={handleCloseEditor} />
+          <ReminderEditor
+            reminder={editingReminder}
+            selectedDate={selectedDate}
+            onClose={handleCloseEditor}
+            onSave={() => {}} 
+          />
         )}
       </div>
     </div>

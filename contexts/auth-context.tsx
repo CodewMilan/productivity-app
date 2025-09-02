@@ -9,6 +9,10 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<boolean>
   signIn: (email: string, password: string) => Promise<boolean>
   signOut: () => Promise<void>
+  id:string
+  email: string
+  name: string
+  age?: number
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -33,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
       options: {
-        data: { name }, // store name in user metadata
+        data: { name }, 
       },
     })
     setIsLoading(false)
@@ -56,8 +60,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }
 
+  const updateProfile = async (updates: { name?: string; age?: number }) => {
+    if (!user) return
+    const existingUsers = JSON.parse(localStorage.getItem("auth-users") || "[]")
+    const idx = existingUsers.findIndex((u: any) => u.id === user.id)
+    if (idx !== -1) {
+      const current = existingUsers[idx]
+      const updatedUser: User = {
+        id: current.id,
+        email: current.email,
+        name: updates.name ?? current.name,
+        age: typeof updates.age === "number" ? updates.age : current.age,
+      }
+   
+      existingUsers[idx] = { ...current, ...updatedUser }
+      localStorage.setItem("auth-users", JSON.stringify(existingUsers))
+      localStorage.setItem("auth-user", JSON.stringify(updatedUser))
+      setUser(updatedUser)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, isLoading, signUp, signIn, signOut, updateProfile }}>
       {children}
     </AuthContext.Provider>
   )

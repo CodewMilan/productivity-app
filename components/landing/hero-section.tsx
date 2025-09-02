@@ -29,10 +29,6 @@ export function HeroSection() {
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6 group bg-transparent">
-              <Play className="mr-2 h-5 w-5" />
-              Watch Demo
-            </Button>
           </div>
 
           <div className="flex items-center gap-8 text-sm text-muted-foreground">

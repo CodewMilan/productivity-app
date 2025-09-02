@@ -6,8 +6,8 @@ import { createContext, useContext, useState, useEffect } from "react"
 interface TabActivity {
   date: string
   tabSwitches: number
-  focusTime: number // in seconds
-  blurTime: number // in seconds
+  focusTime: number 
+  blurTime: number 
   pageViews: number
   mostActiveHour: number
 }
@@ -48,27 +48,27 @@ export function TabTrackerProvider({ children }: { children: React.ReactNode }) 
   const [lastFocusTime, setLastFocusTime] = useState(Date.now())
   const [isPageVisible, setIsPageVisible] = useState(true)
 
-  // Load saved stats on mount
+  
   useEffect(() => {
     const savedStats = localStorage.getItem("productivity-app-tab-stats")
     if (savedStats) {
       const parsedStats = JSON.parse(savedStats)
       const today = new Date().toDateString()
 
-      // Check if it's a new day
+    
       if (parsedStats.todayActivity.date !== today) {
-        // Archive yesterday's data and start fresh
+       
         const historicalData = JSON.parse(localStorage.getItem("productivity-app-tab-history") || "[]")
         historicalData.push(parsedStats.todayActivity)
 
-        // Keep only last 30 days
+       
         if (historicalData.length > 30) {
           historicalData.splice(0, historicalData.length - 30)
         }
 
         localStorage.setItem("productivity-app-tab-history", JSON.stringify(historicalData))
 
-        // Calculate weekly average
+       
         const lastWeek = historicalData.slice(-7)
         const weeklyAverage =
           lastWeek.length > 0 ? lastWeek.reduce((sum, day) => sum + day.tabSwitches, 0) / lastWeek.length : 0
@@ -90,7 +90,6 @@ export function TabTrackerProvider({ children }: { children: React.ReactNode }) 
       }
     }
 
-    // Track initial page view
     setStats((prev) => ({
       ...prev,
       todayActivity: {
@@ -100,12 +99,12 @@ export function TabTrackerProvider({ children }: { children: React.ReactNode }) 
     }))
   }, [])
 
-  // Save stats whenever they change
+  
   useEffect(() => {
     localStorage.setItem("productivity-app-tab-stats", JSON.stringify(stats))
   }, [stats])
 
-  // Page Visibility API tracking
+  
   useEffect(() => {
     if (!isTracking) return
 
@@ -114,7 +113,7 @@ export function TabTrackerProvider({ children }: { children: React.ReactNode }) 
       const isVisible = !document.hidden
 
       if (isVisible && !isPageVisible) {
-        // Page became visible (user switched back to this tab)
+      
         setStats((prev) => ({
           ...prev,
           todayActivity: {
@@ -126,7 +125,7 @@ export function TabTrackerProvider({ children }: { children: React.ReactNode }) 
         }))
         setLastFocusTime(now)
       } else if (!isVisible && isPageVisible) {
-        // Page became hidden (user switched to another tab)
+        
         const focusTime = Math.floor((now - lastFocusTime) / 1000)
         setStats((prev) => ({
           ...prev,
@@ -144,7 +143,7 @@ export function TabTrackerProvider({ children }: { children: React.ReactNode }) 
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
   }, [isTracking, isPageVisible, lastFocusTime])
 
-  // Window focus/blur tracking
+ 
   useEffect(() => {
     if (!isTracking) return
 
@@ -183,17 +182,17 @@ export function TabTrackerProvider({ children }: { children: React.ReactNode }) 
     }
   }, [isTracking, lastFocusTime])
 
-  // Calculate productivity score
+  
   useEffect(() => {
     const { focusTime, tabSwitches, blurTime } = stats.todayActivity
     const totalTime = focusTime + blurTime
 
     let score = 100
 
-    // Reduce score based on excessive tab switching
+    
     if (tabSwitches > 50) score -= Math.min(30, (tabSwitches - 50) * 0.5)
 
-    // Increase score based on focus time ratio
+   
     if (totalTime > 0) {
       const focusRatio = focusTime / totalTime
       score = Math.max(0, Math.min(100, score * focusRatio + 20))

@@ -5,6 +5,7 @@ import { LandingHeader } from "@/components/landing/header"
 import { HeroSection } from "@/components/landing/hero-section"
 import { FeaturesSection } from "@/components/landing/features-section"
 import { CTASection } from "@/components/landing/cta-section"
+import { LandingFooter } from "@/components/landing/footer"
 
 export default function HomePage() {
   const { isLoading } = useAuth()
@@ -24,7 +25,9 @@ export default function HomePage() {
         <HeroSection />
         <FeaturesSection />
         <CTASection />
+        
       </main>
+      <LandingFooter githubUrl="https://github.com/CodewMilan" linkedinUrl="https://linkedin.com/in/milan4606" />
     </div>
   )
 }

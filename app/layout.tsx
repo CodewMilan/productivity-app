@@ -7,6 +7,7 @@ import { CalendarProvider } from "@/contexts/calendar-context"
 import { PomodoroProvider } from "@/contexts/pomodoro-context"
 import { TabTrackerProvider } from "@/contexts/tab-tracker-context"
 import "./globals.css"
+import PageTransition from "@/components/page-transition"
 
 const kodeMono = Kode_Mono({
   subsets: ["latin"],
@@ -15,7 +16,7 @@ const kodeMono = Kode_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Productivity App",
+  title: "Taskline",
   description: "A comprehensive productivity app with Pomodoro timer, notes, calendar, and more",
   generator: "v0.app",
 }
@@ -27,7 +28,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${kodeMono.variable} antialiased dark`}>
-      <body className="font-mono">
+      <body className="font-mono bg-black text-white">
+      <PageTransition>
         <AuthProvider>
           <PomodoroProvider>
             <TabTrackerProvider>
@@ -37,6 +39,7 @@ export default function RootLayout({
             </TabTrackerProvider>
           </PomodoroProvider>
         </AuthProvider>
+      </PageTransition>
       </body>
     </html>
   )

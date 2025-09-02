@@ -29,7 +29,7 @@ export function ActivityChart() {
 
   const ProductivityIcon = getProductivityIcon(stats.productivityScore)
 
-  // Generate hourly activity data (mock data for visualization)
+
   const hourlyData = Array.from({ length: 24 }, (_, hour) => ({
     hour,
     activity: hour === stats.todayActivity.mostActiveHour ? stats.todayActivity.tabSwitches : Math.random() * 10,

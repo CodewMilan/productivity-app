@@ -67,12 +67,12 @@ export function CalendarGrid({ selectedDate, onDateSelect }: CalendarGridProps) 
   const renderCalendarDays = () => {
     const days = []
 
-    // Empty cells for days before the first day of the month
+    
     for (let i = 0; i < firstDayOfWeek; i++) {
       days.push(<div key={`empty-${i}`} className="h-12"></div>)
     }
 
-    // Days of the month
+   
     for (let day = 1; day <= daysInMonth; day++) {
       const dateString = formatDateString(day)
       const isCurrentDay = isToday(day)

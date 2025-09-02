@@ -7,8 +7,8 @@ interface Reminder {
   id: string
   title: string
   description: string
-  date: string // YYYY-MM-DD format
-  time: string // HH:MM format
+  date: string 
+  time: string 
   createdAt: Date
 }
 
