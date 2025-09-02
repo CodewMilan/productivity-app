@@ -10,6 +10,11 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  // Skip middleware for auth routes
+  if (req.nextUrl.pathname.startsWith("/auth")) {
+    return res
+  }
+
   if (!session) {
     return NextResponse.redirect(new URL("/auth", req.url))
   }
@@ -18,5 +23,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*"], // protect only /dashboard
 }
