@@ -42,7 +42,7 @@ export function SignInForm({ onToggleMode }: SignInFormProps) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "https://tasklineapp.vercel.app/auth/callback",
+        redirectTo: "https://tasklineapp.vercel.app/dashboard",
       },
     })
     if (error) console.error("Error logging in:", error.message)
